@@ -33,9 +33,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts()
+        public async Task<ActionResult<IReadOnlyList<ProductToReturnDto>>> GetProducts(string sort,int?brandId,int?typeId)
         {
-            var spec=new ProductsWithTypesAndBrandsSpecification();
+            var spec=new ProductsWithTypesAndBrandsSpecification(sort,brandId,typeId);  //specification class
             
             var products=await _productRepo.ListAsync(spec);
 
@@ -64,9 +64,9 @@ namespace API.Controllers
             return Ok(await _productBrandRepo.ListAllAync());
         }
 
-
+  
         [HttpGet("types")]
-        public async Task<ActionResult<IReadOnlyList<ProductBrand>>>GetProductTypes()
+        public async Task<ActionResult<IReadOnlyList<ProductType>>>GetProductTypes()
         {
             return Ok(await _productTypeRepo.ListAllAync());
         }
