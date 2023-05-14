@@ -34,7 +34,6 @@ export class ShopComponent implements OnInit {
   getProducts() {
     this.shopService.getProducts(this.shopParams).subscribe({
       next: response => {
-        console.log(response)
 
         this.products = response.data;
         this.shopParams.pageNumber = response.pageIndex;
@@ -44,6 +43,7 @@ export class ShopComponent implements OnInit {
       error: error => console.log(error)
     })
   }
+
 
   getBrands() {
     this.shopService.getBrands().subscribe({
@@ -59,6 +59,7 @@ export class ShopComponent implements OnInit {
     })
   }
 
+  //events
   onBrandSelected(brandId: number) {
     this.shopParams.brandId = brandId;
     this.shopParams.pageNumber = 1;
