@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/enviroment';
 import { Basket, BasketItem, BasketTotals } from '../shared/models/basket';
 import { Product } from '../shared/models/product';
@@ -34,10 +34,12 @@ export class BasketService {
       }
     })
   }
-
+  //for returning private field
   getCurrentBasketValue() {
     return this.basketSource.value;
   }
+
+  //------------------------------------------------->
 
   addItemToBasket(item: Product | BasketItem, quantity = 1) {
     if (this.isProduct(item)) item = this.mapProductItemToBasketItem(item);
@@ -58,7 +60,24 @@ export class BasketService {
       type: item.productType
     }
   }
-  
+
+  private createBasket(): Basket {
+    const basket = new Basket();
+    localStorage.setItem('basket_id', basket.id);
+    return basket;
+  }
+
+  private addOrUpdateItem(items: BasketItem[], itemToAdd: BasketItem, quantity: number): BasketItem[] {
+    const item = items.find(x => x.id === itemToAdd.id);
+    if (item) item.quantity += quantity;
+    else { //add item if is not in basket
+      itemToAdd.quantity = quantity;
+      items.push(itemToAdd);
+    }
+    return items;
+  }
+
+ //and removing basket it self if there is not any item
   removeItemFromBasket(id: number, quantity = 1) {
     const basket = this.getCurrentBasketValue();
     if (!basket) return;
@@ -82,23 +101,6 @@ export class BasketService {
       }
     })
   }
-
-  private addOrUpdateItem(items: BasketItem[], itemToAdd: BasketItem, quantity: number): BasketItem[] {
-    const item = items.find(x => x.id === itemToAdd.id);
-    if (item) item.quantity += quantity;
-    else {
-      itemToAdd.quantity = quantity;
-      items.push(itemToAdd);
-    }
-    return items;
-  }
-
-  private createBasket(): Basket {
-    const basket = new Basket();
-    localStorage.setItem('basket_id', basket.id);
-    return basket;
-  }
-
 
 
   private calculateTotals() {
